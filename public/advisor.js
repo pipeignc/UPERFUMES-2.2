@@ -49,6 +49,8 @@ $('recommend-form').addEventListener('submit', async event => {
   event.preventDefault();
   const button = event.target.querySelector('button[type=submit]');
   button.disabled = true;
+  const more = $('more-recommendations');
+  more.hidden = true;
   $('recommend-results').replaceChildren();
   try {
     const data = Object.fromEntries(new FormData(event.target));
@@ -57,7 +59,16 @@ $('recommend-form').addEventListener('submit', async event => {
 
     feedback('recommend-message', 'Buscando afinidades en el modelo…');
     const result = await api('recommendations', data);
-    result.items.forEach(perfume => $('recommend-results').append(productCard(perfume)));
+    let shown = 0;
+    function showNext(count) {
+      const next = result.items.slice(shown, shown + count);
+      next.forEach(perfume => $('recommend-results').append(productCard(perfume)));
+      shown += next.length;
+      more.hidden = shown >= result.items.length;
+      more.textContent = 'Ver más fragancias (' + shown + ' de ' + result.items.length + ')';
+    }
+    more.onclick = () => showNext(12);
+    showNext(3);
     feedback('recommend-message', result.items.length ? result.notice : 'No hay formatos disponibles con ese presupuesto.');
   } catch (error) { feedback('recommend-message', error.message, true); }
   finally { button.disabled = false; }
@@ -131,7 +142,10 @@ document.querySelectorAll('[data-question]').forEach(button => button.addEventLi
 
 function productCard(p) {
   const card = element('article', '', 'perfume-card');
-  card.append(element('h3', p.name), element('p', p.reason), element('small', 'Disponible · despacho calculado al pagar'));
+  card.append(element('h3', p.name));
+  if (p.modelPrice != null) card.append(element('p', 'Precio de referencia del frasco: ' + money(p.modelPrice) + (p.withinBudget ? ' · dentro de tu presupuesto' : ' · supera tu presupuesto')));
+  if (p.reason) card.append(element('p', p.reason));
+  card.append(element('small', p.available ? 'Decants disponibles · despacho calculado al pagar' : 'Sin decant disponible para este presupuesto'));
   p.formats.forEach(f => { const a = element('a', f.ml + ' ml · ' + money(f.price), 'cart-btn cart-btn--ghost'); a.href = f.href; card.append(a); });
   return card;
 }

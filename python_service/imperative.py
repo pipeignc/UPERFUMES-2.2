@@ -122,7 +122,7 @@ def load_bundle(path):
 
 
 def recommend(bundle, age, climate, occasion, budget_clp, gender, rate, top_n=3):
-    if not 1 <= age <= 120 or not 1 <= top_n <= 10:
+    if not 1 <= age <= 120 or (top_n is not None and not 1 <= top_n <= 10):
         raise ValueError("Edad o cantidad de recomendaciones inválida.")
     profile = pd.DataFrame([{
         "Edad": age, "Clima_Cod": CLIMATES[climate], "Ocasion_Cod": OCCASIONS[occasion],

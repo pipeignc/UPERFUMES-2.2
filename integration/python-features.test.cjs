@@ -95,8 +95,12 @@ test('La pantalla ejecuta las tres funcionalidades usando Python real', async ()
     $('recommend-form').elements.budget_clp.value = '142500';
     submit('recommend-form');
     await until(() => document.querySelectorAll('.perfume-card').length === 3);
-    assert.ok($('recommend-results').querySelector('a[href^="/producto.html?id="]'));
-    assert.match($('recommend-results').textContent, /3 ml/);
+    assert.match($('recommend-results').textContent, /Precio de referencia del frasco/);
+    const more = $('more-recommendations');
+    assert.match(more.textContent, /3 de 236/);
+    while (!more.hidden) more.click();
+    const names = Array.from($('recommend-results').querySelectorAll('h3'), h => h.textContent);
+    assert.equal(new Set(names).size, 236);
 
     document.querySelector('[data-panel="compare"]').click();
     await until(() => !$('compare').hidden);

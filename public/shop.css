@@ -30,7 +30,18 @@
   body:has(.product-actions) .page-hub,body:has(#orderForm) .page-hub { bottom:8rem; }
   .shipping-summary { position:sticky; bottom:4.5rem; z-index:459; }
 }
-#catalogSearch { margin: 1.5rem 0; }
+#catalogSearch,.header-search { flex:1; min-width:0; max-width:30rem; }
+.header-inner:has(form[role="search"]) { gap:clamp(.4rem,1vw,1rem); }
+.header-inner .site-nav { gap:clamp(.5rem,1vw,1rem); }
+#catalogFilters { position:absolute; top:100%; left:var(--gutter); right:var(--gutter); max-height:65vh; overflow:auto; margin:0 auto; max-width:56rem; padding:1rem; background:var(--bg-panel); border:1px solid var(--line); }
+@media (min-width:761px) and (max-width:960px) {
+  .header-inner:has(form[role="search"]) { flex-wrap:wrap; }
+  .header-inner:has(form[role="search"]) .site-nav { width:100%; justify-content:space-between; }
+}
+@media (max-width:520px) {
+  #catalogSearch .cart-btn { padding:.45rem; }
+  .header-inner .search-box { gap:.4rem; padding:0 .4rem; }
+}
 .search-row { display:flex; gap:.6rem; }
 .search-box { display:flex; flex:1; min-width:0; align-items:center; gap:1rem; padding:0 1rem; background:var(--bg-panel); border:1px solid var(--line-strong); }
 .search-box:focus-within { outline:2px solid var(--gold); }

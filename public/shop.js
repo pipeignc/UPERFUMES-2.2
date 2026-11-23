@@ -46,7 +46,10 @@
           button.querySelector('.decant-price').textContent=format?.available?money(format.price):'Agotado';
         });
       });
-      controls.addEventListener('submit',e=>e.preventDefault()); controls.addEventListener('input',filter);
+      const showResults = () => document.getElementById('coleccion').scrollIntoView({block:'start'});
+      controls.addEventListener('submit', e => { e.preventDefault(); panel.hidden = true; toggle.setAttribute('aria-expanded','false'); showResults(); });
+      controls.addEventListener('input', () => { filter(); showResults(); });
+      fields.query.value = new URLSearchParams(location.search).get('query') || '';
       controls.addEventListener('reset', () => setTimeout(filter, 0));
       filter();
     }

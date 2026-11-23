@@ -11,11 +11,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2314100D'/%3E%3Ctext x='32' y='42' font-family='Georgia,serif' font-size='30' fill='%23C6A15B' text-anchor='middle'%3EU%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="/shop.css">
 <link rel="stylesheet" href="/advisor.css">
 </head>
 <body class="advisor-page"><header class="site-header" id="siteHeader">
   <div class="header-inner">
     <a href="/index.html#inicio" class="logo">UPerfumes</a>
+    <form class="header-search" role="search" action="/index.html#coleccion">
+      <label class="search-box"><span class="search-icon" aria-hidden="true"></span><input type="search" name="query" placeholder="Buscar" aria-label="Buscar perfume o marca"></label>
+    </form>
 
     <nav class="site-nav" id="siteNav"><a href="/packs.html">Packs</a><a href="/asesor.html#recommend" data-i18n="advisor.recommend">Recomendador IA</a>
 <a href="/asesor.html#chat" data-i18n="advisor.chat">Chat</a>
@@ -43,7 +47,7 @@
       <button type="button" data-panel="chat" aria-pressed="false" aria-controls="chat">03 · Conversa con tu asesor</button>
     </nav>
     <section id="recommend" class="panel">
-      <div class="section-heading"><div><span class="eyebrow">HECHO A TU MEDIDA</span><h2>Cuéntanos un poco de ti</h2></div><p>Te mostramos formatos disponibles del catálogo dentro de tu presupuesto.</p></div>
+      <div class="section-heading"><div><span class="eyebrow">HECHO A TU MEDIDA</span><h2>Cuéntanos un poco de ti</h2></div><p>Descubre las fragancias del modelo que mejor encajan con tu perfil.</p></div>
       <form id="recommend-form" class="profile-form">
         <label>Edad<input name="age" type="number" value="25" min="1" max="120" required></label>
         <label>Clima<select name="climate" id="climate" required></select></label>
@@ -54,7 +58,7 @@
       </form>
       <p id="recommend-message" role="status" class="feedback">Completa tu perfil para descubrir tres sugerencias.</p>
       <div id="recommend-results" class="results" aria-label="Perfumes recomendados"></div>
-      <p class="fineprint">El modelo orienta la selección; si una fragancia no se vende aquí, ofrecemos alternativas del catálogo según tu perfil. El presupuesto se aplica al decant y excluye despacho.</p>
+      <button id="more-recommendations" class="primary" type="button" hidden>Ver más fragancias</button>
     </section>
     <section id="compare" class="panel" hidden>
       <div class="section-heading"><div><span class="eyebrow">ELIGE CON CALMA</span><h2>Un aroma para tu presupuesto</h2></div><p>Compara decants disponibles por su precio real, de menor a mayor.</p></div>

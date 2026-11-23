@@ -32,7 +32,7 @@ class RecommendationRequest(RequestModel):
     gender: str
     budget_clp: Budget
     rate: Rate
-    top_n: int = Field(default=3, ge=1, le=10, strict=True)
+    top_n: int | None = Field(default=3, ge=1, le=10, strict=True)
 
     @field_validator("climate", "occasion", "gender")
     @classmethod
