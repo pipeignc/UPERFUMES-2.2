@@ -99,37 +99,7 @@
   /* ---------------------------------------------------------------------
      4. Filtro de catálogo por familia olfativa
      --------------------------------------------------------------------- */
-  var filters = document.getElementById("filters");
   var grid = document.getElementById("perfumeGrid");
-  var emptyMsg = document.getElementById("filtersEmpty");
-
-  if (filters && grid) {
-    var chips = filters.querySelectorAll(".filter-chip");
-    var cards = grid.querySelectorAll(".perfume-card");
-
-    filters.addEventListener("click", function (e) {
-      var chip = e.target.closest(".filter-chip");
-      if (!chip) return;
-
-      chips.forEach(function (c) {
-        c.classList.remove("is-active");
-        c.setAttribute("aria-selected", "false");
-      });
-      chip.classList.add("is-active");
-      chip.setAttribute("aria-selected", "true");
-
-      var family = chip.getAttribute("data-filter");
-      var visibleCount = 0;
-
-      cards.forEach(function (card) {
-        var matches = family === "todos" || card.dataset.family === family;
-        card.classList.toggle("is-filtered-out", !matches);
-        if (matches) visibleCount++;
-      });
-
-      if (emptyMsg) emptyMsg.hidden = visibleCount !== 0;
-    });
-  }
 
   /* ---------------------------------------------------------------------
      5. Revelado de la cuadrícula al entrar en pantalla (una sola vez)

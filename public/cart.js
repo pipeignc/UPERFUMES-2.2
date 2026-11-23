@@ -262,7 +262,7 @@
      "drawer") y la página del carrito (variant "page"). */
   function rowHTML(line, variant) {
     var isPack = line.id.startsWith('pack-');
-    var link = isPack ? 'index.html#packs' : "producto.html?id=" + encodeURIComponent(line.id);
+    var link = isPack ? 'packs.html' : "producto.html?id=" + encodeURIComponent(line.id);
     var unit = line.unitPrice !== null ? formatCLP(line.unitPrice) : "—";
     var total = line.lineTotal !== null ? formatCLP(line.lineTotal) : "—";
     var attrs = ' data-id="' + esc(line.id) + '" data-ml="' + line.ml + '"';

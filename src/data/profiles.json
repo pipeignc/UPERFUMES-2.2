@@ -1,5 +1,6 @@
 {
   "dior-sauvage-edt": {
+    "family": "aromatico",
     "occasions": [
       "diario",
       "oficina",
@@ -40,6 +41,7 @@
     }
   },
   "invictus-victory-elixir": {
+    "family": "amaderado",
     "occasions": [
       "noche",
       "cita",
@@ -80,6 +82,7 @@
     }
   },
   "dior-homme-intense": {
+    "family": "floral",
     "occasions": [
       "noche",
       "formal",
@@ -119,6 +122,7 @@
     }
   },
   "valentino-born-in-roma-extradose": {
+    "family": "amaderado",
     "occasions": [
       "noche",
       "cita",
@@ -158,6 +162,7 @@
     }
   },
   "jpg-le-male-elixir": {
+    "family": "oriental",
     "occasions": [
       "noche",
       "cita"
@@ -196,6 +201,7 @@
     }
   },
   "jpg-le-beau-le-parfum": {
+    "family": "gourmand",
     "occasions": [
       "diario",
       "cita",
@@ -235,6 +241,7 @@
     }
   },
   "jpg-le-male-le-parfum": {
+    "family": "oriental",
     "occasions": [
       "noche",
       "cita",
@@ -275,6 +282,7 @@
     }
   },
   "mancera-cedrat-boise": {
+    "family": "citrico",
     "occasions": [
       "diario",
       "oficina",
@@ -315,6 +323,7 @@
     }
   },
   "mykonos-inception": {
+    "family": "floral",
     "occasions": [
       "diario",
       "cita"
@@ -353,6 +362,7 @@
     }
   },
   "azzaro-most-wanted-intense": {
+    "family": "gourmand",
     "occasions": [
       "diario",
       "noche",
@@ -393,6 +403,7 @@
     }
   },
   "french-avenue-liquid-brun": {
+    "family": "oriental",
     "occasions": [
       "noche",
       "cita"

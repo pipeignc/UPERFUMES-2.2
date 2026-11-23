@@ -1,7 +1,7 @@
 (function () {
 'use strict';
 
-// Solo presentación: recomendación, conversación y comparación se resuelven en Python.
+// La API del asesor devuelve formatos disponibles y precios del catálogo.
 const base = new URL('/api/advisor/', document.baseURI);
 const $ = id => document.getElementById(id);
 const money = value => new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(value) + ' CLP';
@@ -75,13 +75,22 @@ $('compare-form').addEventListener('submit', async event => {
 
     feedback('compare-message', 'Comparando precios…');
     const result = await api('compare', data);
-    result.items.forEach(perfume => {
+    const formats = result.items.flatMap(perfume =>
+      perfume.formats.map(format => ({ ...format, name: perfume.name }))
+    ).sort((a, b) => a.price - b.price || a.name.localeCompare(b.name, 'es'));
+    for (const format of formats) {
       const row = document.createElement('tr');
-      const cell = element('td', ''); const link = element('a', perfume.name + ' · ' + perfume.ml + ' ml'); link.href = perfume.href; cell.append(link); row.append(cell, element('td', perfume.price_formatted), element('td', money(perfume.remaining_clp)));
+      const cell = document.createElement('td');
+      const link = element('a', format.name + ' · ' + format.ml + ' ml');
+      link.href = format.href;
+      cell.append(link);
+      row.append(cell, element('td', money(format.price)), element('td', money(data.budget_clp - format.price)));
       $('compare-results').append(row);
-    });
-    $('compare-table').hidden = result.items.length === 0;
-    feedback('compare-message', result.items.length ? `Mostrando ${result.items.length} opciones del catálogo · despacho no incluido.` : 'No encontramos perfumes con ese nombre y presupuesto. Prueba otro filtro.');
+    }
+    $('compare-table').hidden = formats.length === 0;
+    feedback('compare-message', formats.length
+      ? `Formatos disponibles: ${formats.length} · despacho no incluido.`
+      : 'No encontramos perfumes que combinen esos filtros dentro de tu presupuesto.');
   } catch (error) { feedback('compare-message', error.message, true); }
   finally { button.disabled = false; }
 });

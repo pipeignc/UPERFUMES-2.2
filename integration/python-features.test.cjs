@@ -104,6 +104,18 @@ test('La pantalla ejecuta las tres funcionalidades usando Python real', async ()
     submit('compare-form');
     await until(() => $('compare-results').children.length > 0);
     assert.match($('compare-results').textContent, /Sauvage EDT/);
+    assert.equal($('compare-results').children.length, 2);
+    assert.match($('compare-results').children[0].textContent, /3 ml/);
+    assert.match($('compare-results').children[1].textContent, /5 ml/);
+    const filters = $('compare-form').elements;
+    filters.query.value = '';
+    filters.family.value = 'citrico';
+    filters.occasion.value = 'diario';
+    filters.budget_clp.value = '7000';
+    submit('compare-form');
+    await until(() => $('compare-results').textContent.includes('Cedrat Boise'));
+    assert.equal($('compare-results').children.length, 1);
+
 
     document.querySelector('[data-panel="chat"]').click();
     await until(() => !$('chat').hidden);

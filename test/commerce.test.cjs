@@ -62,14 +62,49 @@ test('agotados se excluyen de recomendaciones y packs y se rechazan al cobrar',a
 async function until(fn) {for(let i=0;i<100;i++){if(fn())return;await new Promise(r=>setTimeout(r,30));}throw Error('UI timeout');}
 test('catálogo filtra sin duplicar tarjetas y agrega el pack completo al carrito',async()=>{
   const errors=[];const vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(e.message));
-  const dom=await JSDOM.fromURL(base+'/',{runScripts:'dangerously',pretendToBeVisual:true,virtualConsole:vc,
+  const openPage = page => JSDOM.fromURL(base+page,{runScripts:'dangerously',pretendToBeVisual:true,virtualConsole:vc,
     resources:{interceptors:[requestInterceptor(r=>{if(!r.url.startsWith(base))return new Response('',{headers:{'Content-Type':'text/css'}});})]},
     beforeParse(w){w.matchMedia=()=>({matches:true});w.fetch=(url,opts)=>fetch(new URL(url,base),opts);w.Element.prototype.scrollIntoView=function(){};}});
+  const dom = await openPage('/');
   try {
-    const doc=dom.window.document;await until(()=>doc.querySelectorAll('.shop-pack button').length===2);
+    const doc=dom.window.document;
+    await until(()=>doc.querySelector('#shopCount').textContent.includes('11 fragancias'));
+    doc.querySelector('#toggleFilters').click();
+    assert.equal(doc.querySelector('#catalogFilters').hidden,false);
+    const form=doc.querySelector('#catalogSearch');
+    form.elements.family.value='citrico';
+    form.elements.occasion.value='diario';
+    form.elements.family.dispatchEvent(new dom.window.Event('input',{bubbles:true}));
+    assert.equal(doc.querySelectorAll('#perfumeGrid article:not([hidden])').length,1);
+    form.reset();
+    await until(()=>doc.querySelectorAll('#perfumeGrid article:not([hidden])').length===11);
     const search=doc.querySelector('#shopSearch');search.value='JPG Elixir';search.dispatchEvent(new dom.window.Event('input',{bubbles:true}));
     const visible=[...doc.querySelectorAll('#perfumeGrid .perfume-card[data-perfume]')].filter(e=>!e.hidden);assert.equal(visible.length,1);assert.equal(visible[0].dataset.perfume,'jpg-le-male-elixir');
-    doc.querySelector('.shop-pack button').click();assert.deepEqual(JSON.parse(JSON.stringify(dom.window.UPCart.items())),[{id:'pack-frescos',ml:3,qty:1}]);
-    await until(()=>doc.querySelector('#cartDrawer').textContent.includes('16.776'));assert.deepEqual(errors,[]);
-  }finally{dom.window.close();}
+    assert.ok(doc.querySelector('a[href="/packs.html"]'));
+  } finally { dom.window.close(); }
+  const packs = await openPage('/packs.html');
+  try {
+    const doc = packs.window.document;
+    await until(()=>doc.querySelectorAll('.shop-pack button').length===2);
+    doc.querySelector('.shop-pack button').click();assert.deepEqual(JSON.parse(JSON.stringify(packs.window.UPCart.items())),[{id:'pack-frescos',ml:3,qty:1}]);
+    await until(()=>doc.querySelector('#cartDrawer').textContent.includes('16.776'));const cards = doc.querySelectorAll('.shop-pack');
+    assert.deepEqual(Array.from(cards, card => card.querySelector('img').getAttribute('src')),
+      ['/images/pack-frescos.png','/images/pack-dulces.png']);
+    cards[1].querySelector('button').click();
+    assert.deepEqual(Array.from(packs.window.UPCart.items(), line => line.id), ['pack-frescos','pack-dulces']);
+    assert.deepEqual(errors,[]);
+  }finally{packs.window.close();}
+});
+
+test('el asesor cambia de tema después de Sauvage y el comparador combina filtros', async () => {
+  const history = [{role:'user',content:'¿Cuánto cuesta Sauvage?'}];
+  const ask = message => post('/api/advisor/chat',{message,history});
+  const liquid = (await ask('¿Qué notas tiene Liquid Brun?')).body;
+  assert.deepEqual(liquid.items.map(p=>p.id), ['french-avenue-liquid-brun']);
+  assert.match(liquid.answer,/Liquid Brun.*corazón/);
+  assert.equal((await ask('¿Y el despacho?')).body.items.length,0);
+  assert.match((await ask('¿Y en 5 ml?')).body.answer,/Sauvage.*5 ml/);
+  const filters = {budget_clp:7000, family:'citrico', occasion:'diario'};
+  assert.deepEqual((await post('/api/advisor/compare',filters)).body.items.map(p=>p.id), ['mancera-cedrat-boise']);
+  assert.equal((await post('/api/advisor/compare',{...filters,budget_clp:3000})).body.items.length,0);
 });

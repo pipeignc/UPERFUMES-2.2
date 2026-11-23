@@ -41,7 +41,7 @@
   <div class="header-inner">
     <a href="#inicio" class="logo">UPerfumes</a>
 
-    <nav class="site-nav" id="siteNav"><a href="/asesor.html#recommend" data-i18n="advisor.recommend">Recomendador IA</a>
+    <nav class="site-nav" id="siteNav"><a href="/packs.html">Packs</a><a href="/asesor.html#recommend" data-i18n="advisor.recommend">Recomendador IA</a>
 <a href="/asesor.html#chat" data-i18n="advisor.chat">Chat</a>
 <a href="/asesor.html#compare" data-i18n="advisor.compare">Comparador</a>
       <a href="#recomendador" data-i18n="nav.recomendador">Recomendador</a>
@@ -224,15 +224,19 @@
       <p data-i18n="collection.subtitle">Once fragancias masculinas de alta concentración. Filtra por familia olfativa para encontrar el perfil que buscas.</p>
     </div>
 
-    <div class="filters" id="filters" role="tablist" aria-label="Filtrar por familia olfativa" data-i18n-aria="collection.filterAriaLabel">
-      <button class="filter-chip is-active" data-filter="todos" role="tab" aria-selected="true" data-i18n="collection.filters.todos">Todos</button>
-      <button class="filter-chip" data-filter="citrico" role="tab" aria-selected="false" data-i18n="collection.filters.citrico">Cítrico</button>
-      <button class="filter-chip" data-filter="aromatico" role="tab" aria-selected="false" data-i18n="collection.filters.aromatico">Aromático</button>
-      <button class="filter-chip" data-filter="amaderado" role="tab" aria-selected="false" data-i18n="collection.filters.amaderado">Amaderado</button>
-      <button class="filter-chip" data-filter="floral" role="tab" aria-selected="false" data-i18n="collection.filters.floral">Floral</button>
-      <button class="filter-chip" data-filter="oriental" role="tab" aria-selected="false" data-i18n="collection.filters.oriental">Oriental</button>
-      <button class="filter-chip" data-filter="gourmand" role="tab" aria-selected="false" data-i18n="collection.filters.gourmand">Gourmand</button>
-    </div>
+    <form id="catalogSearch" role="search">
+      <div class="search-row"><label class="search-box"><span class="search-icon" aria-hidden="true"></span><input type="search" name="query" id="shopSearch" placeholder="Buscar" aria-label="Buscar perfume o marca"></label>
+        <button type="button" id="toggleFilters" class="cart-btn cart-btn--ghost" aria-expanded="false" aria-controls="catalogFilters">Filtros</button></div>
+      <div id="catalogFilters" class="shop-filters" hidden>
+        <label>Familia olfativa<select name="family"><option value="">Todas</option><option value="citrico">Cítrico</option><option value="aromatico">Aromático</option><option value="amaderado">Amaderado</option><option value="floral">Floral</option><option value="oriental">Oriental</option><option value="gourmand">Gourmand</option></select></label>
+        <label>Ocasión<select name="occasion"><option value="">Todas</option><option value="diario">Diario / universidad</option><option value="oficina">Oficina</option><option value="noche">Noche</option><option value="cita">Cita</option><option value="formal">Evento formal</option></select></label>
+        <label>Perfil<select name="profile"><option value="">Todos</option><option value="dulce">Dulce</option><option value="fresco">Fresco</option><option value="amaderado">Amaderado</option></select></label>
+        <label>Precio máximo (CLP)<input name="budget" type="number" min="1" placeholder="Sin límite"></label>
+        <label><input name="stock" type="checkbox"> Solo disponibles</label>
+        <button type="reset" class="cart-btn cart-btn--ghost">Limpiar búsqueda y filtros</button>
+      </div>
+      <p id="shopCount" role="status"></p>
+    </form>
 
     <div class="perfume-grid" id="perfumeGrid">
 
@@ -716,6 +720,7 @@
 -->
 <aside class="page-hub" id="pageHub" aria-label="Navegación rápida y modo de color" data-i18n-aria="hub.ariaLabel">
   <nav class="hub-nav" aria-label="Ir a sección" data-i18n-aria="hub.navAriaLabel">
+    <a href="/packs.html" class="hub-link">Packs</a>
     <a href="#inicio" class="hub-link" data-section="inicio">
       <span class="hub-dot" aria-hidden="true"></span><span class="hub-text" data-i18n="nav.inicio">Inicio</span>
     </a>

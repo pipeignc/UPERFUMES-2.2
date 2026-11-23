@@ -34,10 +34,10 @@ function packs(catalog) {
       available: configured && items.every(i => enrich(i.perfumeId, catalog[i.perfumeId]).formats.find(f => f.ml === 3).available) };
   });
 }
-function search(products, { query = '', profile = '', occasion = '', budget = Infinity, stock = false } = {}) {
+function search(products, { query = '', profile = '', family = '', occasion = '', budget = Infinity, stock = false } = {}) {
   const words = normalize(query).split(' ').filter(Boolean);
   return products.filter(p => words.every(w => normalize(p.house + ' ' + p.name + ' ' + p.badge).includes(w)) &&
-    (!profile || p.profiles.includes(profile)) && (!occasion || p.occasions?.includes(occasion)) &&
+    (!family || p.family === family) && (!profile || p.profiles.includes(profile)) && (!occasion || p.occasions?.includes(occasion)) &&
     (!stock || p.available) && p.formats.some(f => f.price <= budget && (!stock || f.available)));
 }
 function quote(items, region, getProduct) {

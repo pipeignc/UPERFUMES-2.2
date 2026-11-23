@@ -17,7 +17,7 @@
   <div class="header-inner">
     <a href="/index.html#inicio" class="logo">UPerfumes</a>
 
-    <nav class="site-nav" id="siteNav"><a href="/asesor.html#recommend" data-i18n="advisor.recommend">Recomendador IA</a>
+    <nav class="site-nav" id="siteNav"><a href="/packs.html">Packs</a><a href="/asesor.html#recommend" data-i18n="advisor.recommend">Recomendador IA</a>
 <a href="/asesor.html#chat" data-i18n="advisor.chat">Chat</a>
 <a href="/asesor.html#compare" data-i18n="advisor.compare">Comparador</a>
       <a href="/index.html#recomendador" data-i18n="nav.recomendador">Recomendador</a>
@@ -34,7 +34,7 @@
 </header><div class="advisor-return"><a href="/index.html" class="order-back">← Volver a la tienda</a><a href="/index.html#coleccion" class="order-back" data-i18n="order.back">Volver a la colección</a></div><main class="advisor-main">
     <section class="advisor-hero">
       <div><span class="eyebrow">UN PERFUME. MUCHAS POSIBILIDADES.</span><h1>Tu próximo aroma<br>empieza <em>aquí.</em></h1><p>Descubre fragancias según tu estilo, explora precios y resuelve tus dudas con tu asesor local.</p></div>
-      <aside class="rate-card"><h2>Elige tu próximo decant</h2><p>Compara tamaños de 3, 5 y 10 ml con precios reales en CLP. Entra a la ficha para agregar tu favorito al carrito.</p><a class="order-back" href="/index.html#packs">Descubre nuestros packs →</a></aside>
+      <aside class="rate-card"><h2>Elige tu próximo decant</h2><p>Compara tamaños de 3, 5 y 10 ml con precios reales en CLP. Entra a la ficha para agregar tu favorito al carrito.</p><a class="order-back" href="/packs.html">Descubre nuestros packs →</a></aside>
     </section>
     <p id="service-status" class="status" role="status">Conectando con el asesor…</p>
     <nav class="tabs" aria-label="Herramientas de asesoría">
@@ -61,6 +61,8 @@
       <form id="compare-form" class="compare-form">
         <label>Buscar perfume<input name="query" type="search" maxlength="120" placeholder="Por ejemplo, Sauvage"></label>
         <label>Presupuesto máximo en CLP<input name="budget_clp" type="number" min="1" max="100000000" step="1" value="15000" required></label>
+        <label>Familia olfativa<select name="family"><option value="">Todas</option><option value="citrico">Cítrico</option><option value="aromatico">Aromático</option><option value="amaderado">Amaderado</option><option value="floral">Floral</option><option value="oriental">Oriental</option><option value="gourmand">Gourmand</option></select></label>
+        <label>Ocasión<select name="occasion"><option value="">Todas</option><option value="diario">Diario / universidad</option><option value="oficina">Oficina</option><option value="noche">Noche</option><option value="cita">Cita</option><option value="formal">Evento formal</option></select></label>
         <button class="primary" type="submit">Comparar alternativas</button>
       </form>
       <p id="compare-message" role="status" class="feedback">Encuentra opciones sin exceder tu presupuesto.</p>
