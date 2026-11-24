@@ -270,7 +270,7 @@
     return (
       '<li class="cart-line cart-line--' + variant + '">' +
         '<a class="cart-line__thumb" href="' + link + '" tabindex="-1" aria-hidden="true">' +
-          (isPack ? '<span>3 × 3 ml</span>' : '<img src="images/' + esc(line.id) + '.jpg" alt="" loading="lazy">') +
+          '<img src="images/' + esc(line.id) + (isPack ? '.png' : '.jpg') + '" alt="" loading="lazy">' +
         "</a>" +
         '<div class="cart-line__info">' +
           '<a class="cart-line__name" href="' + link + '">' +

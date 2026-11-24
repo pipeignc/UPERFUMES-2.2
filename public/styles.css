@@ -571,6 +571,12 @@ h2{
   transform: translateY(0);
   transition-delay: calc(var(--i, 0) * 55ms);
 }
+@media (max-width: 760px){
+  .perfume-grid .perfume-card{
+    opacity: 1;
+    transform: none;
+  }
+}
 .perfume-card:hover{ background: var(--bg-panel); }
 
 .perfume-card.is-filtered-out{

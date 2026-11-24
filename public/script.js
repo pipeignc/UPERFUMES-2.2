@@ -122,7 +122,7 @@
             }
           });
         },
-        { threshold: 0.08 }
+        { threshold: 0 }
       );
       gridObserver.observe(grid);
     }
