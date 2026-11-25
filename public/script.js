@@ -609,7 +609,7 @@
       "buy.summaryPrefix": "Tu decant: ",
       "info.title": "Información", "info.subtitle": "Medios de pago y despacho para tus decants.",
       "info.paymentTitle": "Medios de pago", "info.shippingTitle": "Envíos",
-      "info.shippingText": "Hacemos despacho a todo Chile a través de Starken. El costo y el tiempo de entrega dependen de tu comuna; te los confirmamos al coordinar el pedido.",
+      "info.shippingText": "Hacemos despacho a todo Chile a través de Starken, el costo y el tiempo de entrega dependen de tu región, te lo confirmamos al coordinar el pedido.",
       "info.note": "¿Quieres hacer un pedido? Escríbenos desde la sección <a href=\"#contacto\">Contacto</a>.",
       "contact.title": "Contacto",
       "contact.subtitle": "¿Buscas una fragancia en particular o quieres más información sobre alguna casa del catálogo? Escríbenos.",
