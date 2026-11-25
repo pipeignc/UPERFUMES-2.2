@@ -98,6 +98,13 @@ test('La pantalla ejecuta las tres funcionalidades usando Python real', async ()
     assert.match($('recommend-results').textContent, /Precio de referencia del frasco/);
     const more = $('more-recommendations');
     assert.match(more.textContent, /3 de 236/);
+    document.querySelector('[data-lang="en"]').click();
+    assert.match($('recommend-results').textContent, /Reference bottle price/);
+    assert.equal($('climate').selectedOptions[0].textContent, 'Cold');
+    assert.equal($('climate').value, 'Frío');
+    document.querySelector('[data-lang="pt"]').click();
+    assert.match(more.textContent, /Ver mais fragrâncias/);
+    document.querySelector('[data-lang="es"]').click();
     while (!more.hidden) more.click();
     const names = Array.from($('recommend-results').querySelectorAll('h3'), h => h.textContent);
     assert.equal(new Set(names).size, 236);

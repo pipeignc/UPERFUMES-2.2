@@ -17,7 +17,7 @@ const TRANSFER_DETAILS = {
   accountNumber: "11.111.111-1",
   holder: "UPerfumes SpA",
   rut: "11.111.111-1",
-  email: "hola@uperfumes.com"
+  email: "feliparfums@gmail.com"
 };
 
 /**

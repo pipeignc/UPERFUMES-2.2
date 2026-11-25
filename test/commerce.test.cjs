@@ -68,7 +68,7 @@ test('catálogo filtra sin duplicar tarjetas y agrega el pack completo al carrit
   const dom = await openPage('/');
   try {
     const doc=dom.window.document;
-    await until(()=>doc.querySelector('#shopCount').textContent.includes('11 fragancias'));
+    await until(()=>doc.querySelectorAll('.shop-from').length === 11);
     doc.querySelector('#toggleFilters').click();
     assert.equal(doc.querySelector('#catalogFilters').hidden,false);
     const form=doc.querySelector('#catalogSearch');
@@ -86,6 +86,10 @@ test('catálogo filtra sin duplicar tarjetas y agrega el pack completo al carrit
   try {
     const doc = packs.window.document;
     await until(()=>doc.querySelectorAll('.shop-pack button').length===2);
+    doc.querySelector('[data-lang="en"]').click();
+    assert.equal(doc.querySelector('.shop-pack h3').textContent, 'Fresh everyday scents');
+    doc.querySelector('[data-lang="pt"]').click();
+    assert.equal(doc.querySelector('.shop-pack button').textContent, 'Adicionar pack ao carrinho');
     doc.querySelector('.shop-pack button').click();assert.deepEqual(JSON.parse(JSON.stringify(packs.window.UPCart.items())),[{id:'pack-frescos',ml:3,qty:1}]);
     await until(()=>doc.querySelector('#cartDrawer').textContent.includes('16.776'));const cards = doc.querySelectorAll('.shop-pack');
     assert.deepEqual(Array.from(cards, card => card.querySelector('img').getAttribute('src')),
@@ -94,6 +98,16 @@ test('catálogo filtra sin duplicar tarjetas y agrega el pack completo al carrit
     assert.deepEqual(Array.from(packs.window.UPCart.items(), line => line.id), ['pack-frescos','pack-dulces']);
     assert.deepEqual(errors,[]);
   }finally{packs.window.close();}
+  const product = await openPage('/producto.html?id=dior-sauvage-edt');
+  try {
+    const doc = product.window.document;
+    await until(()=>doc.querySelector('.shop-details h2'));
+    doc.querySelector('[data-lang="pt"]').click();
+    assert.equal(doc.querySelector('.shop-details h2').textContent, 'É para ti?');
+    assert.match(doc.querySelector('.shop-details').textContent, /Intensidade/);
+    doc.querySelector('[data-lang="en"]').click();
+    assert.match(doc.querySelector('.shop-details').textContent, /Best for: everyday wear/);
+  } finally { product.window.close(); }
 });
 
 test('el asesor cambia de tema después de Sauvage y el comparador combina filtros', async () => {

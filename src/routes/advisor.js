@@ -59,6 +59,6 @@ router.post('/recommendations', async (req, res) => {
 router.post('/chat', (req,res) => {
   const message=req.body.message;
   if(typeof message!=='string' || !message.trim() || message.length>1000) return res.status(400).json({detail:'Escribe una consulta de hasta 1000 caracteres.'});
-  res.json(chat(message, req.body.history, result));
+  res.json(chat(message, req.body.history, result, req.body.language));
 });
 module.exports=router;

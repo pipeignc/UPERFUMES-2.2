@@ -274,10 +274,10 @@
         "</a>" +
         '<div class="cart-line__info">' +
           '<a class="cart-line__name" href="' + link + '">' +
-            esc(line.house) + " " + esc(line.name) +
-            (line.badge ? ' <span class="badge">' + esc(line.badge) + "</span>" : "") +
+            esc(line.house) + " " + esc(isPack ? tr('shop.' + line.id, line.name) : line.name) +
+            (line.badge ? ' <span class="badge">' + esc(isPack ? tr('shop.samples', line.badge) : line.badge) + "</span>" : "") +
           "</a>" +
-          '<p class="cart-line__meta">' + (isPack ? '3 muestras de 3 ml' : line.ml + ' ml') + " · " + unit + " " + esc(tr("cart.each", "c/u")) + "</p>" +
+          '<p class="cart-line__meta">' + (isPack ? esc(tr('shop.samples', '3 muestras de 3 ml')) : line.ml + ' ml') + " · " + unit + " " + esc(tr("cart.each", "c/u")) + "</p>" +
           '<div class="cart-line__controls">' +
             '<div class="qty" role="group" aria-label="' + esc(tr("cart.qty", "Cantidad")) + '">' +
               '<button type="button" data-cart-action="dec"' + attrs +

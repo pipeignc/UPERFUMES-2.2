@@ -6,6 +6,7 @@ const base = new URL('/api/advisor/', document.baseURI);
 const $ = id => document.getElementById(id);
 const money = value => new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(value) + ' CLP';
 const history = [];
+const { shopText: t, localize } = window.UPerfumes;
 
 async function api(path, data) {
   const response = await fetch(new URL(path, base), data === undefined ? {} : {
@@ -19,7 +20,7 @@ async function api(path, data) {
 }
 
 function feedback(id, text, error = false) {
-  $(id).textContent = text;
+  localize($(id), typeof text === 'function' ? text : () => text);
   $(id).classList.toggle('error', error);
 }
 
@@ -57,7 +58,7 @@ $('recommend-form').addEventListener('submit', async event => {
     data.age = Number(data.age);
     data.budget_clp = Number(data.budget_clp);
 
-    feedback('recommend-message', 'Buscando afinidades en el modelo…');
+    feedback('recommend-message', () => t('loading'));
     const result = await api('recommendations', data);
     let shown = 0;
     function showNext(count) {
@@ -65,11 +66,11 @@ $('recommend-form').addEventListener('submit', async event => {
       next.forEach(perfume => $('recommend-results').append(productCard(perfume)));
       shown += next.length;
       more.hidden = shown >= result.items.length;
-      more.textContent = 'Ver más fragancias (' + shown + ' de ' + result.items.length + ')';
+      localize(more, () => t('more', shown, result.items.length));
     }
     more.onclick = () => showNext(12);
     showNext(3);
-    feedback('recommend-message', result.items.length ? result.notice : 'No hay formatos disponibles con ese presupuesto.');
+    feedback('recommend-message', () => t(result.items.length ? (result.mode === 'catalog' ? 'fallback' : 'rank') : 'none'));
   } catch (error) { feedback('recommend-message', error.message, true); }
   finally { button.disabled = false; }
 });
@@ -84,7 +85,7 @@ $('compare-form').addEventListener('submit', async event => {
     const data = Object.fromEntries(new FormData(event.target));
     data.budget_clp = Number(data.budget_clp);
 
-    feedback('compare-message', 'Comparando precios…');
+    feedback('compare-message', () => t('comparing'));
     const result = await api('compare', data);
     const formats = result.items.flatMap(perfume =>
       perfume.formats.map(format => ({ ...format, name: perfume.name }))
@@ -99,17 +100,15 @@ $('compare-form').addEventListener('submit', async event => {
       $('compare-results').append(row);
     }
     $('compare-table').hidden = formats.length === 0;
-    feedback('compare-message', formats.length
-      ? `Formatos disponibles: ${formats.length} · despacho no incluido.`
-      : 'No encontramos perfumes que combinen esos filtros dentro de tu presupuesto.');
+    feedback('compare-message', () => formats.length ? t('count', formats.length) : t('noMatch'));
   } catch (error) { feedback('compare-message', error.message, true); }
   finally { button.disabled = false; }
 });
 
 function bubble(role, text, sources = []) {
   const item = element('article', '', 'bubble ' + role);
-  item.append(element('strong', role === 'user' ? 'Tú' : 'Asesor UPerfumes'), element('p', text));
-  if (sources.length) item.append(element('small', 'Fuente: ' + sources.join(' · ')));
+  item.append(localize(element('strong', ''), () => t(role === 'user' ? 'you' : 'chatName')), element('p', text));
+  if (sources.length) item.append(localize(element('small', ''), () => t('source') + ': ' + t('catalog')));
   $('chat-log').append(item);
   $('chat-log').scrollTop = $('chat-log').scrollHeight;
 }
@@ -123,8 +122,8 @@ $('chat-form').addEventListener('submit', async event => {
   try {
 
     bubble('user', message);
-    feedback('chat-feedback', 'Consultando la base de conocimiento local…');
-    const result = await api('chat', { message, history: history.slice(-8) });
+    feedback('chat-feedback', () => t('looking'));
+    const result = await api('chat', { message, language: window.UPerfumes.getLang(), history: history.slice(-8) });
     bubble('assistant', result.answer, result.sources);
     (result.items || []).forEach(p => $('chat-log').append(productCard(p)));
     history.push({ role: 'user', content: message }, { role: 'assistant', content: result.answer });
@@ -136,26 +135,31 @@ $('chat-form').addEventListener('submit', async event => {
 });
 
 document.querySelectorAll('[data-question]').forEach(button => button.addEventListener('click', () => {
-  $('chat-message').value = button.dataset.question;
+  $('chat-message').value = t(button.dataset.question);
   $('chat-message').focus();
 }));
 
 function productCard(p) {
   const card = element('article', '', 'perfume-card');
   card.append(element('h3', p.name));
-  if (p.modelPrice != null) card.append(element('p', 'Precio de referencia del frasco: ' + money(p.modelPrice) + (p.withinBudget ? ' · dentro de tu presupuesto' : ' · supera tu presupuesto')));
-  if (p.reason) card.append(element('p', p.reason));
-  card.append(element('small', p.available ? 'Decants disponibles · despacho calculado al pagar' : 'Sin decant disponible para este presupuesto'));
+  if (p.modelPrice != null) card.append(localize(element('p', ''), () =>
+    t(p.withinBudget ? 'within' : 'over', money(p.modelPrice))));
+  if (p.reason) {
+    const profile = window.UPerfumes.PERFUMES.find(item => item.id === p.id);
+    card.append(localize(element('p', ''), () => profile && window.UPerfumes.getLang() !== 'es'
+      ? window.UPerfumes.pf(profile).desc : p.reason));
+  }
+  card.append(localize(element('small', ''), () => t(p.available ? 'sizes' : 'noSize')));
   p.formats.forEach(f => { const a = element('a', f.ml + ' ml · ' + money(f.price), 'cart-btn cart-btn--ghost'); a.href = f.href; card.append(a); });
   return card;
 }
 async function initialize() {
   try {
-    const options = {climates:['Cálido/Tropical','Templado','Frío','Húmedo','Árido/Desértico'],occasions:['Diario/Casual','Oficina/Trabajo','Formal/Noche','Fiesta/Salida nocturna','Deportivo/Ejercicio','Cita romántica','Evento especial/Boda'],genders:['Masculino','Femenino','Unisex']};
+    const options = {climates:[['Cálido/Tropical','hot'],['Templado','mild'],['Frío','cold'],['Húmedo','humid'],['Árido/Desértico','dry']],occasions:[['Diario/Casual','casual'],['Oficina/Trabajo','work'],['Formal/Noche','formalNight'],['Fiesta/Salida nocturna','party'],['Deportivo/Ejercicio','sport'],['Cita romántica','romantic'],['Evento especial/Boda','wedding']],genders:[['Masculino','masc'],['Femenino','fem'],['Unisex','uni']]};
     for (const [id, values] of [['climate', options.climates], ['occasion', options.occasions], ['gender', options.genders]]) {
-      values.forEach(value => { const option = element('option', value); option.value = value; $(id).append(option); });
+      values.forEach(([value, key]) => { const option = localize(element('option', ''), () => t(key)); option.value = value; $(id).append(option); });
     }
-    $('service-status').textContent = 'Decants del catálogo · Precios en pesos chilenos · Despacho calculado al pagar';
+    localize($('service-status'), () => t('status'));
   } catch (error) { $('service-status').textContent = 'No pudimos conectar con el asesor. Revisa que el servicio esté iniciado.'; }
 }
 initialize();

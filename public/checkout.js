@@ -55,32 +55,37 @@
     var quoteSequence = 0;
     var shipping = document.createElement('section');
     shipping.className = 'shipping-summary';
-    shipping.innerHTML = '<label>Región de despacho<select id="shippingRegion" required><option value="">Selecciona tu región</option></select></label><p id="shippingTotal" role="status">Selecciona tu región para conocer el total con despacho.</p>';
+    shipping.innerHTML = '<label><span class="region-label"></span><select id="shippingRegion" required><option value="">Selecciona tu región</option></select></label><p id="shippingTotal" role="status">Selecciona tu región para conocer el total con despacho.</p>';
     submitBtn.before(shipping);
     var region = shipping.querySelector('select');
     var totalText = shipping.querySelector('p');
+    const { localize, shopText } = window.UPerfumes;
+    localize(shipping.querySelector('.region-label'), () => shopText('region'));
+    localize(region.options[0], () => shopText('regionSelect'));
+    const showTotal = (key, ...values) => localize(totalText, () => shopText(key, ...values));
+    showTotal('regionHelp');
     submitBtn.disabled = true;
     async function refreshQuote() {
       var sequence = ++quoteSequence;
       quotation = null;
       submitBtn.disabled = true;
-      if (!region.value || !getItems().length) { totalText.textContent = 'Selecciona tu región para conocer el total con despacho.'; return; }
-      totalText.textContent = 'Calculando total…';
+      if (!region.value || !getItems().length) { showTotal('regionHelp'); return; }
+      showTotal('calculating');
       try {
         var response = await fetch('/api/quote', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({items:getItems(),region:region.value})});
         var data = await response.json();
         if (sequence !== quoteSequence) return;
         if (!response.ok) throw new Error((data.errors || []).join(' '));
         quotation = { ...data, itemsKey:JSON.stringify(getItems()) };
-        totalText.textContent = 'Productos: '+formatCLP(data.subtotal)+' · Despacho: '+formatCLP(data.shipping)+' · Total a pagar: '+formatCLP(data.total);
+        showTotal('totals', formatCLP(data.subtotal), formatCLP(data.shipping), formatCLP(data.total));
         submitBtn.disabled = false;
-      } catch(error) { if(sequence===quoteSequence) totalText.textContent = error.message || 'No pudimos calcular el despacho. Selecciona tu región nuevamente.'; }
+      } catch(error) { if(sequence===quoteSequence) localize(totalText, () => window.UPerfumes.getLang() === 'es' && error.message ? error.message : shopText('shippingError')); }
     }
     region.addEventListener('change',refreshQuote);
     if(window.UPCart) window.UPCart.onChange(refreshQuote);
     fetch('/api/shipping').then(r=>{if(!r.ok)throw Error();return r.json();}).then(data=>{
       Object.entries(data.regions).forEach(([name,fee])=>{var option=document.createElement('option');option.value=name;option.textContent=name+' · '+formatCLP(fee);region.append(option);});
-    }).catch(()=>{totalText.textContent='No pudimos cargar las tarifas de despacho. Recarga para reintentar.';});
+    }).catch(()=>{showTotal('shippingError');});
 
     function selectedMethod() {
       var radio = document.querySelector('input[name="pago"]:checked');
