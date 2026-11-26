@@ -349,6 +349,41 @@
       }
     },
     {
+      id: "mykonos-inferno", house: "Mykonos", name: "Inferno", badge: "",
+      occasions: ["diario", "oficina", "cita"], climates: ["calido", "templado"],
+      ageMin: 18, ageMax: 99, budget: "accesible",
+      prices: { 3: 3990, 5: 5990, 10: 8990 },
+      i18n: {
+        "es": {
+          "family": "Cítrica amaderada",
+          "desc": "Grosellas negras y bergamota abren paso a un corazón de especias y un fondo de vetiver. Su aroma recuerda al de Mancera Cedrat Boisé a un precio más accesible.",
+          "notes": {
+            "top": "grosellas negras, toronja y bergamota",
+            "heart": "cardamomo, rosa, nuez moscada, jengibre y clavo de olor",
+            "base": "musgo de roble, almizcle, ámbar, haba tonka, pachulí y vetiver"
+          }
+        },
+        "en": {
+          "family": "Woody citrus",
+          "desc": "Blackcurrant and bergamot give way to a spicy heart and a vetiver base. Its scent recalls Mancera Cedrat Boisé at a more accessible price.",
+          "notes": {
+            "top": "blackcurrant, grapefruit and bergamot",
+            "heart": "cardamom, rose, nutmeg, ginger and clove",
+            "base": "oakmoss, musk, amber, tonka bean, patchouli and vetiver"
+          }
+        },
+        "pt": {
+          "family": "Cítrica amadeirada",
+          "desc": "Groselha-preta e bergamota dão lugar a um coração especiado e a um fundo de vetiver. O aroma lembra Mancera Cedrat Boisé a um preço mais acessível.",
+          "notes": {
+            "top": "groselha-preta, toranja e bergamota",
+            "heart": "cardamomo, rosa, noz-moscada, gengibre e cravinho",
+            "base": "musgo de carvalho, almíscar, âmbar, fava-tonka, patchuli e vetiver"
+          }
+        }
+      }
+    },
+    {
       id: "mykonos-inception",
       house: "Mykonos",
       name: "Inception",
@@ -593,7 +628,7 @@
       "stats.ariaLabel": "La colección en cifras", "stats.fragrances": "fragancias en catálogo",
       "stats.houses": "casas de perfumería", "stats.families": "familias olfativas",
       "collection.title": "La colección",
-      "collection.subtitle": "Once fragancias masculinas de alta concentración. Filtra por familia olfativa para encontrar el perfil que buscas.",
+      "collection.subtitle": "Doce fragancias masculinas de alta concentración. Filtra por familia olfativa para encontrar el perfil que buscas.",
       "collection.filterAriaLabel": "Filtrar por familia olfativa",
       "collection.filters.todos": "Todos", "collection.filters.citrico": "Cítrico", "collection.filters.aromatico": "Aromático",
       "collection.filters.amaderado": "Amaderado", "collection.filters.floral": "Floral", "collection.filters.oriental": "Oriental", "collection.filters.gourmand": "Gourmand",
@@ -846,7 +881,7 @@
       "stats.ariaLabel": "The collection in numbers", "stats.fragrances": "fragrances in the catalog",
       "stats.houses": "perfume houses", "stats.families": "olfactory families",
       "collection.title": "The collection",
-      "collection.subtitle": "Eleven high-concentration masculine fragrances. Filter by olfactory family to find the profile you're after.",
+      "collection.subtitle": "Twelve high-concentration masculine fragrances. Filter by olfactory family to find the profile you're after.",
       "collection.filterAriaLabel": "Filter by olfactory family",
       "collection.filters.todos": "All", "collection.filters.citrico": "Citrus", "collection.filters.aromatico": "Aromatic",
       "collection.filters.amaderado": "Woody", "collection.filters.floral": "Floral", "collection.filters.oriental": "Oriental", "collection.filters.gourmand": "Gourmand",
@@ -1099,7 +1134,7 @@
       "stats.ariaLabel": "A coleção em números", "stats.fragrances": "fragrâncias no catálogo",
       "stats.houses": "casas de perfumaria", "stats.families": "famílias olfativas",
       "collection.title": "A coleção",
-      "collection.subtitle": "Onze fragrâncias masculinas de alta concentração. Filtra por família olfativa para encontrar o perfil que procuras.",
+      "collection.subtitle": "Doze fragrâncias masculinas de alta concentração. Filtra por família olfativa para encontrar o perfil que procuras.",
       "collection.filterAriaLabel": "Filtrar por família olfativa",
       "collection.filters.todos": "Todas", "collection.filters.citrico": "Cítrica", "collection.filters.aromatico": "Aromática",
       "collection.filters.amaderado": "Amadeirada", "collection.filters.floral": "Floral", "collection.filters.oriental": "Oriental", "collection.filters.gourmand": "Gourmand",

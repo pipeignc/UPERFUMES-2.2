@@ -68,16 +68,16 @@ test('catálogo filtra sin duplicar tarjetas y agrega el pack completo al carrit
   const dom = await openPage('/');
   try {
     const doc=dom.window.document;
-    await until(()=>doc.querySelectorAll('.shop-from').length === 11);
+    await until(()=>doc.querySelectorAll('.shop-from').length === 12);
     doc.querySelector('#toggleFilters').click();
     assert.equal(doc.querySelector('#catalogFilters').hidden,false);
     const form=doc.querySelector('#catalogSearch');
     form.elements.family.value='citrico';
     form.elements.occasion.value='diario';
     form.elements.family.dispatchEvent(new dom.window.Event('input',{bubbles:true}));
-    assert.equal(doc.querySelectorAll('#perfumeGrid article:not([hidden])').length,1);
+    assert.equal(doc.querySelectorAll('#perfumeGrid article:not([hidden])').length,2);
     form.reset();
-    await until(()=>doc.querySelectorAll('#perfumeGrid article:not([hidden])').length===11);
+    await until(()=>doc.querySelectorAll('#perfumeGrid article:not([hidden])').length===12);
     const search=doc.querySelector('#shopSearch');search.value='JPG Elixir';search.dispatchEvent(new dom.window.Event('input',{bubbles:true}));
     const visible=[...doc.querySelectorAll('#perfumeGrid .perfume-card[data-perfume]')].filter(e=>!e.hidden);assert.equal(visible.length,1);assert.equal(visible[0].dataset.perfume,'jpg-le-male-elixir');
     assert.ok(doc.querySelector('a[href="/packs.html"]'));
@@ -119,6 +119,7 @@ test('el asesor cambia de tema después de Sauvage y el comparador combina filtr
   assert.equal((await ask('¿Y el despacho?')).body.items.length,0);
   assert.match((await ask('¿Y en 5 ml?')).body.answer,/Sauvage.*5 ml/);
   const filters = {budget_clp:7000, family:'citrico', occasion:'diario'};
-  assert.deepEqual((await post('/api/advisor/compare',filters)).body.items.map(p=>p.id), ['mancera-cedrat-boise']);
+  assert.deepEqual((await post('/api/advisor/compare',filters)).body.items.map(p=>p.id), ['mykonos-inferno','mancera-cedrat-boise']);
+  assert.match((await ask('¿Qué notas tiene Mykonos Inferno?')).body.answer,/Inferno.*toronja.*cardamomo.*vetiver/i);
   assert.equal((await post('/api/advisor/compare',{...filters,budget_clp:3000})).body.items.length,0);
 });

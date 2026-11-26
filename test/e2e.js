@@ -91,8 +91,8 @@ function submit(dom) { $(dom, "#orderForm").dispatchEvent(new dom.window.Event("
   ok(dom.errors.length === 0, "carga sin errores de script" + (dom.errors.length ? " -> " + dom.errors.join(" | ") : ""));
   ok(!!$(dom, "#pageHub #cartToggle"), "el botón del carrito está dentro del HUB");
   ok(!!$(dom, "#cartDrawer"), "existe el panel lateral del carrito");
-  ok($$(dom, ".perfume-card__imglink").length === 11, "11 fotos enlazan a su ficha");
-  ok($$(dom, ".perfume-card__namelink").length === 11, "11 nombres enlazan a su ficha");
+  ok($$(dom, ".perfume-card__imglink").length === 12, "12 fotos enlazan a su ficha");
+  ok($$(dom, ".perfume-card__namelink").length === 12, "12 nombres enlazan a su ficha");
   ok($(dom, '.perfume-card__imglink[href="producto.html?id=dior-sauvage-edt"]'), "el enlace apunta a producto.html?id=...");
   ok(!!dom.window.UPerfumes && !!dom.window.UPCart, "UPerfumes y UPCart disponibles");
 

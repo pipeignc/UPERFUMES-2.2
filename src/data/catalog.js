@@ -42,6 +42,10 @@ const CATALOG = {
     house: "Mancera", name: "Cedrat Boise", badge: "EDP",
     prices: { 3: 6990, 5: 11490, 10: 19990 }
   },
+  "mykonos-inferno": {
+    house: "Mykonos", name: "Inferno", badge: "",
+    prices: { 3: 3990, 5: 5990, 10: 8990 }
+  },
   "mykonos-inception": {
     house: "Mykonos", name: "Inception", badge: "EDP",
     prices: { 3: 3990, 5: 5990, 10: 8990 }

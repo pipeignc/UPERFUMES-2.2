@@ -322,6 +322,47 @@
       }
     }
   },
+  "mykonos-inferno": {
+    "family": "citrico",
+    "occasions": [
+      "diario",
+      "oficina",
+      "cita"
+    ],
+    "climates": [
+      "calido",
+      "templado"
+    ],
+    "i18n": {
+      "es": {
+        "family": "Cítrica amaderada",
+        "desc": "Grosellas negras y bergamota abren paso a un corazón de especias y un fondo de vetiver. Su aroma recuerda al de Mancera Cedrat Boisé a un precio más accesible.",
+        "notes": {
+          "top": "grosellas negras, toronja y bergamota",
+          "heart": "cardamomo, rosa, nuez moscada, jengibre y clavo de olor",
+          "base": "musgo de roble, almizcle, ámbar, haba tonka, pachulí y vetiver"
+        }
+      },
+      "en": {
+        "family": "Woody citrus",
+        "desc": "Blackcurrant and bergamot give way to a spicy heart and a vetiver base. Its scent recalls Mancera Cedrat Boisé at a more accessible price.",
+        "notes": {
+          "top": "blackcurrant, grapefruit and bergamot",
+          "heart": "cardamom, rose, nutmeg, ginger and clove",
+          "base": "oakmoss, musk, amber, tonka bean, patchouli and vetiver"
+        }
+      },
+      "pt": {
+        "family": "Cítrica amadeirada",
+        "desc": "Groselha-preta e bergamota dão lugar a um coração especiado e a um fundo de vetiver. O aroma lembra Mancera Cedrat Boisé a um preço mais acessível.",
+        "notes": {
+          "top": "groselha-preta, toranja e bergamota",
+          "heart": "cardamomo, rosa, noz-moscada, gengibre e cravinho",
+          "base": "musgo de carvalho, almíscar, âmbar, fava-tonka, patchuli e vetiver"
+        }
+      }
+    }
+  },
   "mykonos-inception": {
     "family": "floral",
     "occasions": [
