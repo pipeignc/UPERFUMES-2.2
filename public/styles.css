@@ -551,9 +551,6 @@ h2{
   background: var(--line);
   border: 1px solid var(--line);
 }
-@media (max-width: 360px){
-  .perfume-grid{ grid-template-columns: 1fr; }
-}
 
 .perfume-card{
   background: var(--bg);
@@ -572,9 +569,36 @@ h2{
   transition-delay: calc(var(--i, 0) * 55ms);
 }
 @media (max-width: 760px){
+  .perfume-grid{
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    padding: 0;
+  }
   .perfume-grid .perfume-card{
+    position: relative;
+    min-width: 0;
+    padding: clamp(.4rem, 1.8vw, .85rem);
+    overflow-wrap: anywhere;
     opacity: 1;
     transform: none;
+  }
+  .perfume-grid :is(.perfume-card__index, .perfume-card__family, .perfume-card__desc, .perfume-card__notes, .perfume-card__decants){
+    display: none;
+  }
+  .perfume-grid .perfume-card__image{ margin-bottom: .5rem; }
+  .perfume-grid .perfume-card__name{ font-size: 1rem; line-height: 1.2; }
+  .perfume-grid .perfume-card__namelink{ gap: .25rem; }
+  .perfume-grid .shop-from{ order: 1; margin: .5rem 0 0; font-size: .75rem; }
+
+  /* El enlace de la ficha cubre también el precio y el espacio entre elementos. */
+  .perfume-grid .perfume-card__namelink::after{
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+  .perfume-grid .perfume-card__namelink:focus-visible::after{
+    outline: 2px solid var(--gold);
+    outline-offset: -2px;
   }
 }
 .perfume-card:hover{ background: var(--bg-panel); }
