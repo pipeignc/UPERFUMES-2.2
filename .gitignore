@@ -1,2 +1,4 @@
 *.inventory.sqlite
 *.inventory.sqlite-journal
+
+.env

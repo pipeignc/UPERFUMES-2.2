@@ -142,3 +142,25 @@ test('inventario en ml: pack y decants comparten saldo, la cancelación lo devue
     assert.equal(await stock(),before);
   }
 });
+
+test('el panel privado protege la página y entrega el inventario con credenciales', async(t)=>{
+  process.env.ADMIN_USERNAME='seller';
+  process.env.ADMIN_PASSWORD='long-test-password';
+  for(const route of ['/admin-stock','/api/admin-stock']) assert.equal((await fetch(base+route)).status,404);
+  const privateServer=require('express')().use(require('../src/routes/adminStock')).listen(0,'127.0.0.1');
+  await once(privateServer,'listening');
+  t.after(()=>new Promise(resolve=>privateServer.close(resolve)));
+  const local='http://127.0.0.1:'+privateServer.address().port;
+  assert.equal((await fetch(local+'/api/admin-stock')).status,401);
+  const denied=await fetch(local+'/admin-stock');
+  assert.equal(denied.status,401);
+  const headers={Authorization:'Basic '+Buffer.from('seller:long-test-password').toString('base64')};
+  const page=await fetch(local+'/admin-stock',{headers});
+  assert.equal(page.status,200);
+  assert.match(await page.text(),/Inventario de perfumes/);
+  const api=await fetch(local+'/api/admin-stock',{headers});
+  assert.equal(api.status,200);
+  const data=await api.json();
+  assert.equal(data.products.length,12);
+  assert.ok(data.products.every(item=>Number.isInteger(item.stockMl)));
+});

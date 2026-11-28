@@ -297,3 +297,9 @@ npm run dev
 Al iniciar la tienda se crea un archivo SQLite junto a la base de pedidos, con el sufijo `.inventory.sqlite` (por defecto, `data/uperfumes.sqlite.inventory.sqlite`). Cada perfume nuevo recibe 100 ml una sola vez. La ficha muestra el saldo y la tienda valida el carrito completo antes de cobrar. Cada pack consume 3 ml de cada fragancia que contiene.
 
 El pedido y su descuento de inventario se guardan en una sola transacción. Las transferencias reservan al crear el pedido. Webpay reserva antes de redirigir y devuelve el stock si falla la creación del pago o llega un retorno de rechazo, cancelación o monto inconsistente. Un pedido pendiente sin retorno mantiene su reserva. Para respaldar o trasladar la tienda, detén el servidor y copia juntas las bases de pedidos e inventario.
+
+## Panel privado de inventario
+
+Define `ADMIN_USERNAME` y `ADMIN_PASSWORD` en el archivo local `.env`, guarda los cambios y reinicia la tienda. Abre http://127.0.0.1:3001/admin-stock en el computador que ejecuta Node. El panel consulta SQLite cada 15 segundos mientras está abierto. Marca como agotado un perfume cuando ya no alcanza para su decant más pequeño. Puedes ajustar el umbral de stock bajo con `LOW_STOCK_THRESHOLD_ML` (20 por defecto).
+
+Tailscale Funnel debe apuntar solo al puerto de la tienda (3000 por defecto). El puerto 3001 es exclusivo del panel local. Sin credenciales, la tienda arranca con el panel desactivado.

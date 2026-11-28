@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Inventario | UPerfumes</title>
+  <style>
+    :root{color-scheme:dark;--bg:#14100d;--panel:#211a14;--text:#ede3d3;--muted:#b9aa92;--gold:#c6a15b;--red:#ff8c82;--yellow:#f1cc7a;--green:#a7d3a0}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,sans-serif}
+    main{max-width:960px;margin:48px auto;padding:0 20px}header{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:24px}
+    h1{font:500 2rem Georgia,serif;margin:0}p{color:var(--muted);margin:6px 0}.summary{border:1px solid #44382b;border-radius:12px;padding:18px;background:var(--panel);margin-bottom:20px}
+    .table-wrap{overflow:auto;border:1px solid #44382b;border-radius:12px}table{width:100%;border-collapse:collapse;background:var(--panel);min-width:540px}
+    th,td{text-align:left;padding:13px 16px;border-bottom:1px solid #3a3026}th{font-size:.82rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+    tr:last-child td{border:0}.badge{font-size:.82rem;padding:4px 9px;border-radius:99px}.agotado{color:var(--red);background:#4a211f}.bajo{color:var(--yellow);background:#40351f}.disponible{color:var(--green);background:#203622}
+    @media(max-width:600px){main{margin:26px auto}header{display:block}h1{font-size:1.6rem}.summary{padding:14px}}
+  </style>
+</head>
+<body>
+<main>
+  <header><div><h1>Inventario de perfumes</h1><p>Existencias actualizadas desde la tienda</p></div></header>
+  <section class="summary" id="summary" aria-live="polite">Cargando inventario…</section>
+  <div class="table-wrap"><table><thead><tr><th>Perfume</th><th>Stock</th><th>Estado</th></tr></thead><tbody id="rows"></tbody></table></div>
+  <p>El panel se actualiza automáticamente cada 15 segundos. <span data-stock-threshold>Umbral configurable.</span></p>
+</main>
+<script>
+(async function(){
+const rows=document.getElementById('rows'),summary=document.getElementById('summary');
+const labels={agotado:'Agotado',bajo:'Stock bajo',disponible:'Disponible'};
+async function refresh(){
+ try{
+  const response=await fetch('/api/admin-stock',{cache:'no-store'});
+  if(!response.ok)throw new Error('No se pudo actualizar el inventario');
+  const data=await response.json();
+  rows.replaceChildren(...data.products.map(item=>{
+   const tr=document.createElement('tr');
+   for(const value of [item.house+' · '+item.name,item.stockMl+' ml']){
+    const td=document.createElement('td');td.textContent=value;tr.append(td);
+   }
+   const status=document.createElement('td'),badge=document.createElement('span');
+   badge.className='badge '+item.status;badge.textContent=labels[item.status];status.append(badge);tr.append(status);return tr;
+  }));
+  document.querySelector('[data-stock-threshold]').textContent='Umbral de stock bajo: '+data.thresholdMl+' ml.';
+  const low=data.products.filter(p=>p.status==='bajo').length,empty=data.products.filter(p=>p.status==='agotado').length;
+  summary.textContent=empty+' perfumes agotados · '+low+' con stock bajo (umbral '+data.thresholdMl+' ml).';
+ }catch(error){summary.textContent=error.message}
+}
+refresh();setInterval(refresh,15000);
+})();
+</script>
+</body>
+</html>
