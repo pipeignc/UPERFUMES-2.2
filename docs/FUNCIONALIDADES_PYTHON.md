@@ -159,10 +159,7 @@ Chat y comparador trabajan directamente con el catálogo; siguen funcionando sin
 Python. El recomendador informa cuando usa solo las reglas del catálogo.
 La API Python original sigue disponible bajo `/asesor/api/` para análisis del dataset.
 
-Configuración comercial: `src/data/commerce.json`. El stock confirmado actualmente
-incluye todos los formatos. Para agotar un formato, añadir por ejemplo
-`"dior-sauvage-edt": [3,5]` a `unavailableFormats`. Esta disponibilidad es manual,
-no un inventario por unidades ni una reserva automática de existencias.
+Cada fragancia comienza con 100 ml en SQLite. El catálogo, el asesor y el comparador consultan el saldo por frasco para determinar los formatos disponibles. La configuración `unavailableFormats` de `src/data/commerce.json` permite además suspender formatos específicos.
 Los dos packs incluyen tres muestras de 3 ml y descuentan 20%: $16.776 y $14.376.
 El servidor vuelve a calcular precios, disponibilidad y despacho antes de cobrar.
 Los pedidos nuevos requieren `region` y `quotedTotal`, obtenidos de `POST /api/quote`.

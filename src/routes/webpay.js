@@ -28,10 +28,16 @@ async function handleReturn(req, res) {
   const abortedBuyOrder = req.query.TBK_ORDEN_COMPRA || req.body.TBK_ORDEN_COMPRA;
   if (abortedBuyOrder) {
     const order = ordersService.getByBuyOrder(abortedBuyOrder);
-    if (order) {
+    const abortToken = req.query.TBK_TOKEN || req.body.TBK_TOKEN;
+    const sessionId = req.query.TBK_ID_SESION || req.body.TBK_ID_SESION;
+    if (!order || !(abortToken ? abortToken === order.webpay_token : sessionId === order.session_id)) {
+      return res.redirect("/confirmacion.html?error=1");
+    }
+    if (order.status === "pending_webpay") {
       ordersService.setStatus(abortedBuyOrder, "cancelled");
     }
-    return res.redirect(`/confirmacion.html?order=${encodeURIComponent(abortedBuyOrder)}&cancelado=1`);
+    const cancelled = ["pending_webpay", "cancelled"].includes(order.status);
+    return res.redirect(`/confirmacion.html?order=${encodeURIComponent(abortedBuyOrder)}${cancelled ? "&cancelado=1" : ""}`);
   }
 
   // Ni token_ws ni TBK_ORDEN_COMPRA: no debería pasar en un flujo normal.

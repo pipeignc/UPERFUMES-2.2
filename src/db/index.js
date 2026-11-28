@@ -9,7 +9,20 @@ fs.mkdirSync(path.dirname(resolvedPath), { recursive: true });
 
 const db = new Database(resolvedPath);
 
-db.pragma("journal_mode = WAL");
+// Rollback journals allow SQLite to commit orders and stock atomically across both files.
+db.pragma("journal_mode = DELETE");
+const inventoryPath = resolvedPath + ".inventory.sqlite";
+db.prepare("ATTACH DATABASE ? AS inventory").run(inventoryPath);
+db.pragma("inventory.journal_mode = DELETE");
+db.exec(`
+  CREATE TABLE IF NOT EXISTS inventory.perfumes (
+    id TEXT PRIMARY KEY, ml INTEGER NOT NULL CHECK (ml >= 0)
+  );
+  CREATE TABLE IF NOT EXISTS inventory.allocations (
+    buy_order TEXT NOT NULL, perfume_id TEXT NOT NULL REFERENCES perfumes(id),
+    ml INTEGER NOT NULL CHECK (ml > 0), PRIMARY KEY (buy_order, perfume_id)
+  );
+`);
 db.pragma("foreign_keys = ON");
 
 db.exec(`

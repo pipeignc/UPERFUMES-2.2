@@ -1,3 +1,4 @@
+const inventory = require("./inventory");
 const db = require("../db");
 
 const insertOrderStmt = db.prepare(`
@@ -42,8 +43,9 @@ const setStatusStmt = db.prepare(`
 `);
 
 /** El pedido y todos sus ítems se guardan juntos o no se guarda nada. */
-const createOrderTx = db.transaction((order, items) => {
+const createOrderTx = db.transaction((order, items, amounts) => {
   const info = insertOrderStmt.run({shippingAmount:0, shippingRegion:'', ...order});
+  inventory.reserve(order.buyOrder, amounts);
   const orderId = Number(info.lastInsertRowid);
   for (const item of items) {
     insertItemStmt.run({ orderId, ...item });
@@ -56,8 +58,8 @@ function withItems(row) {
   return row;
 }
 
-function createOrder(order, items) {
-  createOrderTx(order, items);
+function createOrder(order, items, amounts) {
+  createOrderTx.immediate(order, items, amounts);
   return getByBuyOrder(order.buyOrder);
 }
 
@@ -73,7 +75,9 @@ function setWebpayToken(buyOrder, token) {
   setWebpayTokenStmt.run(token, buyOrder);
 }
 
-function setWebpayResult(buyOrder, result) {
+const setWebpayResult = db.transaction((buyOrder, result) => {
+  if (getByBuyOrderStmt.get(buyOrder)?.status !== "pending_webpay") return;
+  if (result.status === "rejected") inventory.release(buyOrder);
   setWebpayResultStmt.run(
     result.status,
     result.authorizationCode || null,
@@ -83,11 +87,13 @@ function setWebpayResult(buyOrder, result) {
     result.rawResponse ? JSON.stringify(result.rawResponse) : null,
     buyOrder
   );
-}
+}).immediate;
 
-function setStatus(buyOrder, status) {
+const setStatus = db.transaction((buyOrder, status) => {
+  if (getByBuyOrderStmt.get(buyOrder)?.status !== "pending_webpay") return;
+  if (["failed", "cancelled", "amount_mismatch"].includes(status)) inventory.release(buyOrder);
   setStatusStmt.run(status, buyOrder);
-}
+}).immediate;
 
 /** Subconjunto seguro para devolver por la API (sin datos internos de Webpay). */
 function toPublicJSON(order) {

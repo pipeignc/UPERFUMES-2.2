@@ -125,7 +125,9 @@ test('La pantalla ejecuta las tres funcionalidades usando Python real', async ()
     filters.budget_clp.value = '7000';
     submit('compare-form');
     await until(() => $('compare-results').textContent.includes('Cedrat Boise'));
-    assert.equal($('compare-results').children.length, 1);
+    assert.equal($('compare-results').children.length, 3);
+    assert.match($('compare-results').textContent, /Inferno/);
+    assert.match($('compare-results').textContent, /Cedrat Boise/);
 
 
     document.querySelector('[data-panel="chat"]').click();

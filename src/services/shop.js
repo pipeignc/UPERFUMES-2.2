@@ -1,3 +1,4 @@
+const inventory = require('./inventory');
 const fs = require('node:fs');
 const path = require('node:path');
 const profiles = require('../data/profiles.json');
@@ -17,8 +18,9 @@ function enrich(id, product) {
   if (/fresc|citric|bergamota/.test(text)) profilesList.push('fresco');
   if (/dulce|vainilla|golosa|tonka|coco/.test(text)) profilesList.push('dulce');
   if (/cedro|madera|vetiver/.test(text)) profilesList.push('amaderado');
-  const formats = Object.entries(product.prices).map(([ml, price]) => ({ ml: Number(ml), price, available: !(config.unavailableFormats[id] || []).includes(Number(ml)) }));
-  return { ...product, id, ...meta, profiles: profilesList, formats, available: formats.some(f => f.available),
+  const stockMl = inventory.availableMl(id);
+  const formats = Object.entries(product.prices).map(([ml, price]) => ({ ml: Number(ml), price, available: stockMl >= Number(ml) && !(config.unavailableFormats[id] || []).includes(Number(ml)) }));
+  return { ...product, id, ...meta, profiles: profilesList, stockMl, formats, available: formats.some(f => f.available),
     summary: meta.i18n?.es?.desc, intensity: ['Elixir','Extradose','EDP Intense'].includes(product.badge) ? 'Alta (orientativa)' : 'Media a alta (orientativa)',
     decantImage: config.decantImages[id] || null };
 }
@@ -40,7 +42,7 @@ function search(products, { query = '', profile = '', family = '', occasion = ''
     (!family || p.family === family) && (!profile || p.profiles.includes(profile)) && (!occasion || p.occasions?.includes(occasion)) &&
     (!stock || p.available) && p.formats.some(f => f.price <= budget && (!stock || f.available)));
 }
-function quote(items, region, getProduct) {
+function quote(items, region, getProduct, amounts = new Map()) {
   if (!Array.isArray(items) || !items.length || items.length > 20) throw new Error('Elige entre 1 y 20 productos.');
   const counts = new Map();
   let subtotal = 0;
@@ -53,6 +55,9 @@ function quote(items, region, getProduct) {
       const key = part.perfumeId + ':' + part.ml;
       counts.set(key, (counts.get(key) || 0) + item.qty);
       const actual = getProduct(part.perfumeId);
+      const needed = (amounts.get(part.perfumeId) || 0) + item.qty * part.qty * part.ml;
+      if (needed > actual.stockMl) throw inventory.insufficient(part.perfumeId);
+      amounts.set(part.perfumeId, needed);
       if (!actual.formats.find(f => f.ml === part.ml)?.available || counts.get(key) > 10) throw new Error('Formato agotado o máximo de 10 unidades por formato.');
     }
     subtotal += p.prices[item.ml] * item.qty;

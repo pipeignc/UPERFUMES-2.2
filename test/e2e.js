@@ -14,7 +14,7 @@ const path = require("path");
 const ROOT = path.resolve(__dirname, "..");
 process.chdir(ROOT);
 const TEST_DB = path.join(os.tmpdir(), "uperfumes-e2e.sqlite");
-for (const f of [TEST_DB, TEST_DB + "-wal", TEST_DB + "-shm"]) { try { fs.unlinkSync(f); } catch (e) {} }
+for (const f of [TEST_DB, TEST_DB + "-wal", TEST_DB + "-shm", TEST_DB + ".inventory.sqlite"]) { try { fs.unlinkSync(f); } catch (e) {} }
 process.env.DATABASE_PATH = TEST_DB;
 process.env.PUBLIC_BASE_URL = "http://localhost:3111";
 process.env.TRANSBANK_ENVIRONMENT = "integration";
@@ -259,7 +259,7 @@ function submit(dom) { $(dom, "#orderForm").dispatchEvent(new dom.window.Event("
 
   // cancelado
   created = await (await fetch(BASE + "/api/orders", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ items: [{ perfumeId: "azzaro-most-wanted-intense", ml: 3, qty: 1 }], customerName: "Luis", customerEmail: "l@l.cl", deliveryAddress: "Calle 12345", paymentMethod: "webpay", region:"Metropolitana", quotedTotal:12490 }) })).json();
-  r = await fetch(BASE + "/webpay/retorno", { method: "POST", redirect: "manual", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: "TBK_TOKEN=x&TBK_ID_SESION=y&TBK_ORDEN_COMPRA=" + created.buyOrder });
+  r = await fetch(BASE + "/webpay/retorno", { method: "POST", redirect: "manual", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: "TBK_TOKEN=" + encodeURIComponent(created.token) + "&TBK_ORDEN_COMPRA=" + created.buyOrder });
   ok(r.headers.get("location").includes("cancelado=1") && db.prepare("SELECT status FROM orders WHERE buy_order = ?").get(created.buyOrder).status === "cancelled", "pago cancelado -> estado 'cancelled', sin llamar a commit");
 
   /* ---------------- 5) pedido.html (comprar ahora) ---------------- */

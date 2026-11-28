@@ -39,8 +39,9 @@ router.post('/quote', (req, res) => {
 router.post("/orders", createOrderRules, handleValidation, async (req, res, next) => {
   try {
     const { items, customerName, customerEmail, deliveryAddress, notes, paymentMethod } = req.body;
+    const amounts = new Map();
     let quotation;
-    try { quotation = shop.quote(items, req.body.region, getProduct); }
+    try { quotation = shop.quote(items, req.body.region, getProduct, amounts); }
     catch (error) { return res.status(400).json({ ok:false, errors:[error.message] }); }
     if (req.body.quotedTotal !== quotation.total) return res.status(409).json({ ok:false, errors:['El total cambió. Revisa el resumen antes de pagar.'] });
 
@@ -82,6 +83,8 @@ router.post("/orders", createOrderRules, handleValidation, async (req, res, next
     amount = quotation.total;
     const sessionId = generateSessionId();
 
+    const returnUrl = paymentMethod === "webpay"
+      ? new URL("/webpay/retorno", process.env.PUBLIC_BASE_URL).toString() : null;
     const order = ordersService.createOrder(
       {
         buyOrder,
@@ -96,21 +99,10 @@ router.post("/orders", createOrderRules, handleValidation, async (req, res, next
         paymentMethod,
         status: paymentMethod === "webpay" ? "pending_webpay" : "pending_transfer"
       },
-      orderItems
+      orderItems, amounts
     );
 
     if (paymentMethod === "webpay") {
-      const baseUrl = process.env.PUBLIC_BASE_URL;
-
-      if(!baseUrl) {
-        throw new Error("PUBLIC_BASE_URL no está configurada en .env");
-      }
-
-      const returnUrl = new URL(
-        "/webpay/retorno",
-        baseUrl
-      ).toString();
-      
       console.log("URL de retorno Webpay:", returnUrl);
       let webpayResponse;
       try {
@@ -151,6 +143,7 @@ router.post("/orders", createOrderRules, handleValidation, async (req, res, next
       transfer: TRANSFER_DETAILS
     });
   } catch (err) {
+    if (err.code === 'INSUFFICIENT_STOCK') return res.status(409).json({ok:false, errors:[err.message]});
     next(err);
   }
 });

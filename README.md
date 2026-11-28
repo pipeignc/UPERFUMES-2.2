@@ -291,3 +291,9 @@ $env:DATABASE_PATH = './data/cloud-dev/uperfumes.sqlite'
 $env:TRANSBANK_ENVIRONMENT = 'integration'
 npm run dev
 ```
+
+## Inventario en mililitros
+
+Al iniciar la tienda se crea un archivo SQLite junto a la base de pedidos, con el sufijo `.inventory.sqlite` (por defecto, `data/uperfumes.sqlite.inventory.sqlite`). Cada perfume nuevo recibe 100 ml una sola vez. La ficha muestra el saldo y la tienda valida el carrito completo antes de cobrar. Cada pack consume 3 ml de cada fragancia que contiene.
+
+El pedido y su descuento de inventario se guardan en una sola transacción. Las transferencias reservan al crear el pedido. Webpay reserva antes de redirigir y devuelve el stock si falla la creación del pago o llega un retorno de rechazo, cancelación o monto inconsistente. Un pedido pendiente sin retorno mantiene su reserva. Para respaldar o trasladar la tienda, detén el servidor y copia juntas las bases de pedidos e inventario.

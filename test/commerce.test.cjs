@@ -123,3 +123,22 @@ test('el asesor cambia de tema después de Sauvage y el comparador combina filtr
   assert.match((await ask('¿Qué notas tiene Mykonos Inferno?')).body.answer,/Inferno.*toronja.*cardamomo.*vetiver/i);
   assert.equal((await post('/api/advisor/compare',{...filters,budget_clp:3000})).body.items.length,0);
 });
+
+test('inventario en ml: pack y decants comparten saldo, la cancelación lo devuelve una sola vez', async () => {
+  const id = 'dior-sauvage-edt';
+  const stock = async () => (await (await fetch(base + '/api/catalog')).json()).products[id].stockMl;
+  const before = await stock();
+  const cart = [...items, {perfumeId:id, ml:5, qty:2}];
+  const quote = await post('/api/quote', {items:cart, region:order.region});
+  require('../src/services/webpay').createTransaction = async () => ({token:'STOCK_TEST',url:'https://example.com'});
+  const purchase = await post('/api/orders', {...order,items:cart,quotedTotal:quote.body.total});
+  assert.equal(purchase.status,201);
+  assert.equal(await stock(),before - 13);
+  const tooLarge = await post('/api/quote', {items:[{perfumeId:id,ml:10,qty:8},{perfumeId:id,ml:5,qty:4}],region:order.region});
+  assert.equal(tooLarge.status,400);
+  assert.equal(await stock(),before - 13);
+  for (let attempt=0; attempt<2; attempt++) {
+    await fetch(base + '/webpay/retorno?TBK_TOKEN=STOCK_TEST&TBK_ORDEN_COMPRA=' + purchase.body.buyOrder,{redirect:'manual'});
+    assert.equal(await stock(),before);
+  }
+});

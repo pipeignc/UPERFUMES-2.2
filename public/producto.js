@@ -67,12 +67,14 @@
   }
 
   function updateTotals() {
+    const maxQty = Number.isInteger(product.stockMl) ? Math.min(MAX_QTY, Math.floor(product.stockMl / selectedMl)) : MAX_QTY;
+    qty = Math.min(qty, Math.max(1, maxQty));
     el("productAddCart").disabled = !product.available;
     el("productBuyNow").hidden = !product.available;
     el("productTotal").textContent = formatCLP(product.prices[selectedMl] * qty);
     el("productQtyValue").textContent = String(qty);
     el("productQtyDec").disabled = qty <= 1;
-    el("productQtyInc").disabled = qty >= MAX_QTY;
+    el("productQtyInc").disabled = qty >= maxQty;
     el("productBuyNow").href =
       "pedido.html?id=" + encodeURIComponent(id) + "&ml=" + selectedMl + "&qty=" + qty;
 
@@ -85,6 +87,9 @@
   // Todo lo que depende del idioma (descripción, notas, texto alternativo).
   function renderLocalized() {
     if (!product) return;
+    const stockLabels = {es: "Stock disponible", en: "Available stock", pt: "Estoque disponível"};
+    el("productStock").hidden = !Number.isInteger(product.stockMl);
+    el("productStock").textContent = (stockLabels[document.documentElement.lang] || stockLabels.es) + ": " + product.stockMl + " ml";
     el("productHouse").textContent = product.house;
     el("productTitle").innerHTML =
       product.name + (product.badge ? ' <span class="badge">' + product.badge + "</span>" : "");
